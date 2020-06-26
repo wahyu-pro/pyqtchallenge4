@@ -11,10 +11,10 @@ class MyApp(QMainWindow):
         self.mainUI()
         self.mainLayout()
         self.setCentralWidget(self.mainWidget)
-        # self.menuBars()
-        # self.setMenuBar(self.menu)
-        # self.toolBars()
-        # self.addToolBar(self.toolBar)
+        self.menuBars()
+        self.setMenuBar(self.menu)
+        self.toolBars()
+        self.addToolBar(self.toolBar)
 
     def mainUI(self):
         self.contactTab = contactTab()
@@ -25,22 +25,21 @@ class MyApp(QMainWindow):
         self.tabs.addTab(self.favoriteTab, "Favorite")
         self.tabs.addTab(self.addContactTab, "Add Contact")
 
-    # def menuBars(self):
-    #     self.menu = self.menuBar()
-    #     home = self.menu.addMenu("Home")
-    #     home.addAction("help")
-    #     home.setToolTip("This is help")
-    #     self.menu.addMenu("About")
-    #     self.menu.addMenu("Price")
+    def menuBars(self):
+        self.menu = self.menuBar()
+        file = self.menu.addMenu("File")
+        app = self.menu.addMenu("App")
+        app.addAction("About")
+        app.triggered.connect(self.toolPrint)
 
-    # def toolPrint(self):
-    #     print("Clicked!!")
+    def toolPrint(self):
+        QMessageBox.information(self, "About", "This is app phone book")
 
-    # def toolBars(self):
-    #     self.toolBar = QToolBar()
-    #     buttonToolbar = QAction(QIcon("img/photo-1558981285-6f0c94958bb6.jpg"), "test", self)
-    #     self.toolBar.addAction(buttonToolbar)
-    #     buttonToolbar.triggered.connect(self.toolPrint)
+    def toolBars(self):
+        self.toolBar = QToolBar()
+        buttonToolbar = QAction(QIcon("icon/Logopit_1592360689718.png"), "test", self)
+        self.toolBar.addAction(buttonToolbar)
+        buttonToolbar.triggered.connect(self.toolPrint)
 
     def mainLayout(self):
         self.layout = QVBoxLayout()
@@ -52,6 +51,7 @@ class MyApp(QMainWindow):
 class contactTab(QWidget):
     def __init__(self):
         super(contactTab, self).__init__()
+        self.dataFavorite = {}
         self.createTable()
         self.mainUI()
         self.setLayout(self.layout)
@@ -64,13 +64,16 @@ class contactTab(QWidget):
         self.layout.addWidget(self.table)
         self.layout.addWidget(self.btnAddFavorite)
 
-    # def addToFavorite(self):
-    #     dataFavo = self.fetchFavorite
-    #     print(dataFavo)
+    def addToFavorite(self):
+        for i in data:
+            if self.dataFavorite['name'] == i['name']:
+                i['favorite'] = 1
+        toJson =  json.dumps(data, indent=4)
+        fwrite = open('contact.json', 'w')
+        fwrite.write(toJson)
 
     def fetchFavorite(self, row, column):
         favoriteData = []
-        favData = []
         rw = row
         cl = column
         for x in range(len(self.head)):
@@ -78,8 +81,7 @@ class contactTab(QWidget):
             favoriteData.append(res)
         for i in data:
             if favoriteData[0] == i['name']:
-                resu = i
-        return resu
+                self.dataFavorite.update(i)
 
     def createTable(self):
         self.head = ["name", "number"]
@@ -101,14 +103,55 @@ class contactTab(QWidget):
 class favoriteTab(QWidget):
     def __init__(self):
         super(favoriteTab, self).__init__()
+        self.dataFavorite = {}
+        self.createTable()
         self.mainUI()
         self.setLayout(self.layout)
 
     def mainUI(self):
-        self.label = QLabel("Wahyu")
+        self.btnDeleteFavorite = QPushButton("Delete from favorite")
+        self.btnDeleteFavorite.clicked.connect(self.deleteFromfavorite)
 
         self.layout = QVBoxLayout()
-        self.layout.addWidget(self.label)
+        self.layout.addWidget(self.table)
+        self.layout.addWidget(self.btnDeleteFavorite)
+
+    def createTable(self):
+        self.head = ["name", "number"]
+        self.contactFav = list(filter(lambda a: a["favorite"] == 1, data))
+        row = len(self.contactFav)
+        self.table = QTableWidget()
+        self.table.setRowCount(row)
+        self.table.setColumnCount(len(self.head))
+        for row in range(len(self.contactFav)):
+            for col in range(len(self.head)):
+                if col == 0:
+                    self.table.setItem(row,col,QTableWidgetItem(self.contactFav[row]["name"]))
+                elif col == 1:
+                    self.table.setItem(row,col,QTableWidgetItem(self.contactFav[row]["number"]))
+
+        self.table.setHorizontalHeaderLabels(self.head)
+        self.table.cellClicked.connect(self.fetchFavorite)
+
+    def fetchFavorite(self, row, column):
+        favoriteData = []
+        rw = row
+        cl = column
+        for x in range(len(self.head)):
+            res = self.table.item(int(rw),int(x)).text()
+            favoriteData.append(res)
+        for i in data:
+            if favoriteData[0] == i['name']:
+                self.dataFavorite.update(i)
+
+    def deleteFromfavorite(self):
+        for i in data:
+            if self.dataFavorite['name'] == i['name']:
+                i['favorite'] = 0
+        toJson =  json.dumps(data, indent=4)
+        fwrite = open('contact.json', 'w')
+        fwrite.write(toJson)
+
 
 class addContactTab(QWidget):
     def __init__(self):
@@ -122,7 +165,7 @@ class addContactTab(QWidget):
         self.inputNumber = QLineEdit()
         self.inputNumber.setPlaceholderText("Add number here ...")
         # push button
-        self.buttonAdd = QPushButton("Add")
+        self.buttonAdd = QPushButton("Add to Contact")
         # signal slot push button
         self.buttonAdd.clicked.connect(self.add)
         # signal slot line edit
