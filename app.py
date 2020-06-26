@@ -50,9 +50,16 @@ class MyApp(QMainWindow):
         self.mainWidget = QWidget()
         self.mainWidget.setLayout(self.layout)
 
+class FetchUrl:
+    def getdata(self):
+        with open('contact.json', 'r') as contact:
+            data = json.load(contact)
+        return data
+
 class contactTab(QWidget):
     def __init__(self):
         super(contactTab, self).__init__()
+        self.data = FetchUrl()
         self.dataFavorite = {}
         self.mainUI()
         self.setLayout(self.layout)
@@ -76,6 +83,8 @@ class contactTab(QWidget):
             fwrite = open('contact.json', 'w')
             fwrite.write(toJson)
             QMessageBox.information(self, "About", "Contact successfully added to favorite")
+            # clas = favoriteTab()
+            # clas.createTable()
 
     def fetchFavorite(self, row, column):
         favoriteData = []
@@ -89,6 +98,7 @@ class contactTab(QWidget):
                 self.dataFavorite.update(i)
 
     def createTable(self):
+        data = self.data.getdata()
         self.head = ["name", "number"]
         row = len(list(data))
         self.table = QTableWidget()
@@ -109,6 +119,7 @@ class contactTab(QWidget):
 class favoriteTab(QWidget):
     def __init__(self):
         super(favoriteTab, self).__init__()
+        self.data = FetchUrl()
         self.dataFavorite = {}
         self.mainUI()
         self.setLayout(self.layout)
@@ -122,6 +133,7 @@ class favoriteTab(QWidget):
         self.layout.addWidget(self.btnDeleteFavorite)
 
     def createTable(self):
+        data = self.data.getdata()
         self.head = ["name", "number"]
         self.contactFav = list(filter(lambda a: a["favorite"] == 1, data))
         row = len(self.contactFav)
@@ -151,6 +163,7 @@ class favoriteTab(QWidget):
                 self.dataFavorite.update(i)
 
     def deleteFromfavorite(self):
+        data = self.data.getdata()
         if self.dataFavorite == {}:
             QMessageBox.warning(self, "Warning", "Please select contact")
         else:
@@ -160,14 +173,15 @@ class favoriteTab(QWidget):
             toJson =  json.dumps(data, indent=4)
             fwrite = open('contact.json', 'w')
             fwrite.write(toJson)
+            # self.createTable()
             QMessageBox.information(self, "About", "Contact successfully remove from favorite")
-            self.createTable()
 
 
 
 class addContactTab(QWidget):
     def __init__(self):
         super(addContactTab, self).__init__()
+        self.data = FetchUrl()
         self.mainUI()
         self.setLayout(self.layout)
 
@@ -189,6 +203,7 @@ class addContactTab(QWidget):
         self.layout.addWidget(self.buttonAdd)
 
     def add(self):
+        data = self.data.getdata()
         name = self.inputName.text()
         number = self.inputNumber.text()
         if name == "" and number == "":
@@ -200,6 +215,8 @@ class addContactTab(QWidget):
             fwrite = open('contact.json', 'w')
             fwrite.write(toJson)
             QMessageBox.information(self, "About", "Contact successfully added")
+            # clas = contactTab()
+            # clas.createTable()
 
 
 if __name__ == "__main__":
