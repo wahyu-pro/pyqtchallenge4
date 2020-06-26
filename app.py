@@ -2,9 +2,6 @@ from PyQt5.QtWidgets import *
 import sys, json
 from PyQt5.QtGui import QIcon
 
-with open('contact.json', 'r') as contact:
-    data = json.load(contact)
-
 class MyApp(QMainWindow):
     def __init__(self):
         super(MyApp, self).__init__()
@@ -73,6 +70,7 @@ class contactTab(QWidget):
         self.layout.addWidget(self.btnAddFavorite)
 
     def addToFavorite(self):
+        data = self.data.getdata()
         if self.dataFavorite == {}:
             QMessageBox.warning(self, "Warning", "Please select contact")
         else:
@@ -87,6 +85,7 @@ class contactTab(QWidget):
             # clas.createTable()
 
     def fetchFavorite(self, row, column):
+        data = self.data.getdata()
         favoriteData = []
         rw = row
         cl = column
@@ -152,6 +151,7 @@ class favoriteTab(QWidget):
         return self.table
 
     def fetchFavorite(self, row, column):
+        data = self.data.getdata()
         favoriteData = []
         rw = row
         cl = column
