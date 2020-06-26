@@ -15,15 +15,17 @@ class MyApp(QMainWindow):
         self.setMenuBar(self.menu)
         self.toolBars()
         self.addToolBar(self.toolBar)
+        self.setWindowTitle("Phone Book")
+        self.setWindowIcon(QIcon("icon/bookphone.png"))
 
     def mainUI(self):
         self.contactTab = contactTab()
         self.favoriteTab = favoriteTab()
         self.addContactTab = addContactTab()
         self.tabs = QTabWidget()
-        self.tabs.addTab(self.contactTab, "Contact")
-        self.tabs.addTab(self.favoriteTab, "Favorite")
-        self.tabs.addTab(self.addContactTab, "Add Contact")
+        self.tabs.addTab(self.contactTab, QIcon("icon/contact.png"), "Contact")
+        self.tabs.addTab(self.favoriteTab, QIcon("icon/favorite.png"), "Favorite")
+        self.tabs.addTab(self.addContactTab, QIcon("icon/addContact.png"), "Add Contact")
 
     def menuBars(self):
         self.menu = self.menuBar()
@@ -37,7 +39,7 @@ class MyApp(QMainWindow):
 
     def toolBars(self):
         self.toolBar = QToolBar()
-        buttonToolbar = QAction(QIcon("icon/Logopit_1592360689718.png"), "test", self)
+        buttonToolbar = QAction(QIcon("icon/tandatanya2.png"), "test", self)
         self.toolBar.addAction(buttonToolbar)
         buttonToolbar.triggered.connect(self.toolPrint)
 
@@ -65,12 +67,17 @@ class contactTab(QWidget):
         self.layout.addWidget(self.btnAddFavorite)
 
     def addToFavorite(self):
-        for i in data:
-            if self.dataFavorite['name'] == i['name']:
-                i['favorite'] = 1
-        toJson =  json.dumps(data, indent=4)
-        fwrite = open('contact.json', 'w')
-        fwrite.write(toJson)
+        if self.dataFavorite == {}:
+            QMessageBox.warning(self, "Warning", "Please select contact")
+        else:
+            for i in data:
+                if self.dataFavorite['name'] == i['name']:
+                    i['favorite'] = 1
+            toJson =  json.dumps(data, indent=4)
+            fwrite = open('contact.json', 'w')
+            fwrite.write(toJson)
+            QMessageBox.information(self, "About", "Contact successfully added to favorite")
+            favoriteTab.createTable
 
     def fetchFavorite(self, row, column):
         favoriteData = []
@@ -145,12 +152,18 @@ class favoriteTab(QWidget):
                 self.dataFavorite.update(i)
 
     def deleteFromfavorite(self):
-        for i in data:
-            if self.dataFavorite['name'] == i['name']:
-                i['favorite'] = 0
-        toJson =  json.dumps(data, indent=4)
-        fwrite = open('contact.json', 'w')
-        fwrite.write(toJson)
+        if self.dataFavorite == {}:
+            QMessageBox.warning(self, "Warning", "Please select contact")
+        else:
+            for i in data:
+                if self.dataFavorite['name'] == i['name']:
+                    i['favorite'] = 0
+            toJson =  json.dumps(data, indent=4)
+            fwrite = open('contact.json', 'w')
+            fwrite.write(toJson)
+            QMessageBox.information(self, "About", "Contact successfully remove from favorite")
+            self.createTable
+
 
 
 class addContactTab(QWidget):
@@ -179,11 +192,15 @@ class addContactTab(QWidget):
     def add(self):
         name = self.inputName.text()
         number = self.inputNumber.text()
-        params = {"name": name, "number": number, "favorite": 0}
-        data.append(params)
-        toJson =  json.dumps(data, indent=4)
-        fwrite = open('contact.json', 'w')
-        fwrite.write(toJson)
+        if name == "" and number == "":
+            QMessageBox.warning(self, "Warning", "Please input name and number !")
+        else:
+            params = {"name": name, "number": number, "favorite": 0}
+            data.append(params)
+            toJson =  json.dumps(data, indent=4)
+            fwrite = open('contact.json', 'w')
+            fwrite.write(toJson)
+            QMessageBox.information(self, "About", "Contact successfully added")
 
 
 if __name__ == "__main__":
