@@ -64,32 +64,39 @@ class contactTab(QWidget):
         self.layout.addWidget(self.table)
         self.layout.addWidget(self.btnAddFavorite)
 
-    def addToFavorite(self, row, column):
+    # def addToFavorite(self):
+    #     dataFavo = self.fetchFavorite
+    #     print(dataFavo)
+
+    def fetchFavorite(self, row, column):
         favoriteData = []
+        favData = []
         rw = row
         cl = column
         for x in range(len(self.head)):
             res = self.table.item(int(rw),int(x)).text()
-            data.append(res)
-        print(list(favoriteData))
-
+            favoriteData.append(res)
+        for i in data:
+            if favoriteData[0] == i['name']:
+                resu = i
+        return resu
 
     def createTable(self):
         self.head = ["name", "number"]
         row = len(list(data))
         self.table = QTableWidget()
         self.table.setRowCount(row)
-        self.table.setColumnCount(len(head))
+        self.table.setColumnCount(len(self.head))
         for row in range(len(data)):
-            for col in range(len(head)):
+            for col in range(len(self.head)):
                 if col == 0:
                     self.table.setItem(row,col,QTableWidgetItem(data[row]["name"]))
                 elif col == 1:
                     self.table.setItem(row,col,QTableWidgetItem(data[row]["number"]))
 
-        self.table.setHorizontalHeaderLabels(head)
+        self.table.setHorizontalHeaderLabels(self.head)
 
-        self.table.cellClicked.connect(self.addToFavorite)
+        self.table.cellClicked.connect(self.fetchFavorite)
 
 class favoriteTab(QWidget):
     def __init__(self):

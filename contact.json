@@ -1,14 +1,17 @@
 [
     {
         "name": "Suryono",
-        "number": "08385873098"
+        "number": "08385873098",
+        "favorite": 0
     },
     {
         "name": "Wahyu",
-        "number": "083805873098"
+        "number": "083805873098",
+        "favorite": 0
     },
     {
         "name": "Abi",
-        "number": "083874635467"
+        "number": "083874635467",
+        "favorite": 0
     }
 ]
