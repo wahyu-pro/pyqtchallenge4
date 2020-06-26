@@ -54,7 +54,6 @@ class contactTab(QWidget):
     def __init__(self):
         super(contactTab, self).__init__()
         self.dataFavorite = {}
-        self.createTable()
         self.mainUI()
         self.setLayout(self.layout)
 
@@ -63,7 +62,7 @@ class contactTab(QWidget):
         self.btnAddFavorite.clicked.connect(self.addToFavorite)
         # set widget
         self.layout = QVBoxLayout()
-        self.layout.addWidget(self.table)
+        self.layout.addWidget(self.createTable())
         self.layout.addWidget(self.btnAddFavorite)
 
     def addToFavorite(self):
@@ -77,7 +76,6 @@ class contactTab(QWidget):
             fwrite = open('contact.json', 'w')
             fwrite.write(toJson)
             QMessageBox.information(self, "About", "Contact successfully added to favorite")
-            favoriteTab.createTable
 
     def fetchFavorite(self, row, column):
         favoriteData = []
@@ -106,12 +104,12 @@ class contactTab(QWidget):
         self.table.setHorizontalHeaderLabels(self.head)
 
         self.table.cellClicked.connect(self.fetchFavorite)
+        return self.table
 
 class favoriteTab(QWidget):
     def __init__(self):
         super(favoriteTab, self).__init__()
         self.dataFavorite = {}
-        self.createTable()
         self.mainUI()
         self.setLayout(self.layout)
 
@@ -120,7 +118,7 @@ class favoriteTab(QWidget):
         self.btnDeleteFavorite.clicked.connect(self.deleteFromfavorite)
 
         self.layout = QVBoxLayout()
-        self.layout.addWidget(self.table)
+        self.layout.addWidget(self.createTable())
         self.layout.addWidget(self.btnDeleteFavorite)
 
     def createTable(self):
@@ -139,6 +137,7 @@ class favoriteTab(QWidget):
 
         self.table.setHorizontalHeaderLabels(self.head)
         self.table.cellClicked.connect(self.fetchFavorite)
+        return self.table
 
     def fetchFavorite(self, row, column):
         favoriteData = []
@@ -162,7 +161,7 @@ class favoriteTab(QWidget):
             fwrite = open('contact.json', 'w')
             fwrite.write(toJson)
             QMessageBox.information(self, "About", "Contact successfully remove from favorite")
-            self.createTable
+            self.createTable()
 
 
 
